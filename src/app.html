@@ -43,7 +43,7 @@
 
       <div class="recommended">
 
-        <div v-for="product in products" class="card">
+        <div v-for="product in products.slice(0,3)" class="card">
 
           <div class="card-title">
             {{ product.name }}
