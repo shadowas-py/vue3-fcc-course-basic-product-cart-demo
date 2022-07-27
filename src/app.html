@@ -43,7 +43,8 @@
 
       <div class="recommended">
 
-        <div v-for="product in inventory.slice(0,3)" class="card">
+        <div v-for="product in products" class="card">
+
           <div class="card-title">
             {{ product.name }}
           </div>
@@ -72,6 +73,7 @@
                 </div>
                 <div class="cell">
                   <input type="number" v-model="product.quantity">
+                  <!-- <input type="number" v-model="product.quantity"> -->
                 </div>
               </div>
             </form>
@@ -80,11 +82,11 @@
             <button class="btn btn-light" @click="addToCart(product.name, product.quantity)">Add to cart</button>
           </div>
         </div>
-        
+
       </div>
 
     </main>
-    <sidebar v-if="sidebarVisible" :toggle_sidebar="toggleSidebar" :cart="cart :inventory"/>
+    <sidebar v-if="sidebarVisible" :toggle_sidebar="toggleSidebar" :cart="cart" :inventory="inventory" />
     <footer>
     </footer>
 
@@ -99,7 +101,8 @@
       return {
         inventory: [],
         cart: {},
-        sidebarVisible: false
+        sidebarVisible: false,
+        inputVal: 1
       }
     },
     methods: {
@@ -112,21 +115,27 @@
         }
         console.log(this.cart)
       },
-      toggleSidebar(){
-        console.log(this.sidebarVisible)
+      toggleSidebar() {
         this.sidebarVisible = !this.sidebarVisible
-        console.log(this.sidebarVisible)
-      }
+      },
     },
-    async mounted(){
+    async mounted() {
       const res = await fetch('./food.json')
       const data = await res.json()
       this.inventory = data
 
+    },
+    computed: {
+      products(){
+        this.inventory.forEach(element => {
+          element.quantity = 1
+        });
+        return this.inventory
+      }
     }
   })
   app.component('sidebar', {
-    props:['toggle_sidebar','cart','inventory'],
+    props: ['toggle_sidebar', 'cart', 'inventory'],
     template: `
     <aside class="cart-container">
       <div class="cart">
@@ -151,7 +160,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr v-for="item in cart">
                 <td><i class="icofont-carrot icofont-3x"></i></td>
                 <td>Carrot</td>
                 <td>$1.00</td>
@@ -174,8 +183,8 @@
         </div>
       </div>
     </aside>`,
-    methods:{
-      populateCart(){
+    methods: {
+      populateCart() {
         this.cart.forEach(element => {
           console.log(element, 'el')
         });
