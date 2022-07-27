@@ -79,7 +79,8 @@
             </form>
           </div>
           <div class="card-footer">
-            <button class="btn btn-light" @click="addToCart(product.name, product.quantity)">Add to cart</button>
+            <button class="btn btn-light" @click="addToCart(product.name, product.quantity, product.price.USD)">Add to
+              cart</button>
           </div>
         </div>
 
@@ -106,14 +107,14 @@
       }
     },
     methods: {
-      addToCart(name, quantity) {
+      addToCart(name,quantity,price) {
         if (this.cart[name] === undefined) {
-          this.cart[name] = quantity
+          this.cart[name] = { name,quantity,price }
         }
         else {
-          this.cart[name] += quantity
+          this.cart[name].quantity += quantity
         }
-        console.log(this.cart)
+        console.log(this.cart[name])
       },
       toggleSidebar() {
         this.sidebarVisible = !this.sidebarVisible
@@ -126,7 +127,7 @@
 
     },
     computed: {
-      products(){
+      products() {
         this.inventory.forEach(element => {
           element.quantity = 1
         });
@@ -134,8 +135,8 @@
       }
     }
   })
-  app.component('sidebar', {
-    props: ['toggle_sidebar', 'cart', 'inventory'],
+  app.component('sidebar',{
+    props: ['toggle_sidebar','cart','inventory'],
     template: `
     <aside class="cart-container">
       <div class="cart">
@@ -162,10 +163,10 @@
             <tbody>
               <tr v-for="item in cart">
                 <td><i class="icofont-carrot icofont-3x"></i></td>
-                <td>Carrot</td>
-                <td>$1.00</td>
-                <td class="center">1</td>
-                <td>$1.00</td>
+                <td>{{item.name}}</td>
+                <td>\${{item.price}}</td>
+                <td class="center">{{item.quantity}}</td>
+                <td>\${{ (item.price * item.quantity).toFixed(2) }}</td>
                 <td class="center">
                   <button class="btn btn-light cart-remove">
                     &times;
@@ -177,17 +178,19 @@
 
           <p class="center"><em>No items in cart</em></p>
           <div class="spread">
-            <span><strong>Total:</strong> $1.00</span>
+            <span><strong>Total:</strong> \${{ getCartValue() }}</span>
             <button class="btn btn-light">Checkout</button>
           </div>
         </div>
       </div>
     </aside>`,
     methods: {
-      populateCart() {
-        this.cart.forEach(element => {
-          console.log(element, 'el')
-        });
+      getCartValue() {
+        let res = Object.values(this.cart).reduce((acc,item) => {
+          console.log(acc,item.quantity,item.price)
+          return acc + (item.quantity * item.price)
+        },0)
+        return res.toFixed(2)
       }
     }
   })
