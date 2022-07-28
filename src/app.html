@@ -27,7 +27,7 @@
       </nav>
       <a class="top-bar-cart-link" @click="toggleSidebar">
         <i class="icofont-cart-alt icofont-1x"></i>
-        <span>Cart (0)</span>
+        <span>Cart ({{ cartTotalQuantity }})</span>
       </a>
     </header>
 
@@ -131,6 +131,11 @@
           element.quantity = 1
         });
         return this.inventory
+      },
+      cartTotalQuantity() {
+        return Object.values(this.cart).reduce((acc,item) => {
+          return acc + item.quantity
+        },0)
       }
     }
   })
