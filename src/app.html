@@ -43,7 +43,7 @@
 
       <div class="recommended">
 
-        <div v-for="product in products.slice(0,3)" class="card">
+        <div v-for="(product, i) in products.slice(0,3)" :key="i" class="card">
 
           <div class="card-title">
             {{ product.name }}
@@ -73,14 +73,16 @@
                 </div>
                 <div class="cell">
                   <input type="number" v-model="product.quantity">
-                  <!-- <input type="number" v-model="product.quantity"> -->
                 </div>
               </div>
             </form>
           </div>
           <div class="card-footer">
-            <button class="btn btn-light" @click="addToCart(product.name, product.quantity, product.price.USD)">Add to
-              cart</button>
+            <button class="btn btn-light" @click="addToCart(product.name,
+             product.quantity,
+             product.price.USD,
+            i)"
+            >Add to cart</button>
           </div>
         </div>
 
@@ -106,14 +108,14 @@
       }
     },
     methods: {
-      addToCart(name,quantity,price) {
+      addToCart(name,quantity,price, key) {
         if (this.cart[name] === undefined) {
           this.cart[name] = { name,quantity,price }
         }
         else {
           this.cart[name].quantity += quantity
         }
-        console.log(this.cart[name])
+        this.inventory[key].quantity = 1
       },
       toggleSidebar() {
         this.sidebarVisible = !this.sidebarVisible
