@@ -103,7 +103,6 @@
         inventory: [],
         cart: {},
         sidebarVisible: false,
-        inputVal: 1
       }
     },
     methods: {
@@ -168,7 +167,7 @@
                 <td class="center">{{item.quantity}}</td>
                 <td>\${{ (item.price * item.quantity).toFixed(2) }}</td>
                 <td class="center">
-                  <button class="btn btn-light cart-remove">
+                  <button class="btn btn-light cart-remove" @click="removeItem(item.name)">
                     &times;
                   </button>
                 </td>
@@ -176,7 +175,7 @@
             </tbody>
           </table>
 
-          <p class="center"><em>No items in cart</em></p>
+          <p class="center"><em v-if="!Object.keys(cart).length">No items in cart</em></p>
           <div class="spread">
             <span><strong>Total:</strong> \${{ getCartValue() }}</span>
             <button class="btn btn-light">Checkout</button>
@@ -191,6 +190,10 @@
           return acc + (item.quantity * item.price)
         },0)
         return res.toFixed(2)
+      },
+      removeItem(name) {
+        console.log(name)
+        delete this.cart[name]
       }
     }
   })
